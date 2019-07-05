@@ -31,12 +31,11 @@ class Storage implements IStorage {
   }
 
   public async get(id: string): Promise<any> {
-    const item = await this.ddb.get({ Key: { id }, TableName: this.tableName })
+    const { Item } = await this.ddb.get({ Key: { id }, TableName: this.tableName })
       .promise().catch((err) => {
         throw new createError.InternalServerError(err.message);
       });
-
-    return item.Item;
+    return Item;
   }
 
   public async put(item: IDynamoItem) {

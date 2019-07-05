@@ -1,17 +1,13 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
 import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
 import { storageMiddleware } from './lib/storageMiddleware';
-import { IStorage } from './storage';
-
-interface IListEvent extends APIGatewayProxyEvent {
-  storage: IStorage;
-}
+import { IStorageAPIGatewayProxyEvent } from './types';
 
 const listHandler = middy(
-  async (event: IListEvent): Promise<APIGatewayProxyResult> => {
+  async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     console.log(event.path);
 
     return {
