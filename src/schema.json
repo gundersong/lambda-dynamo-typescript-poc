@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "definitions": {
+        "ITodo": {
+            "properties": {
+                "complete": {
+                    "description": "A boolean indicating whether the Todo has been completed or not",
+                    "type": "string"
+                },
+                "description": {
+                    "description": "The description of the Todo entry",
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "body": {
+            "$ref": "#/definitions/ITodo",
+            "description": "A Todo object describing a task to be done"
+        }
+    },
+    "type": "object"
+}

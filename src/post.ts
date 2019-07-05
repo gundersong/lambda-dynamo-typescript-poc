@@ -5,7 +5,7 @@ import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
 import { storageMiddleware } from './lib/storageMiddleware';
-import { inputSchema } from './schema';
+import schema from './schema.json';
 import { IStorageAPIGatewayProxyEvent, ITodo } from './types';
 
 type IPostEvent = Modify<IStorageAPIGatewayProxyEvent, {
@@ -21,7 +21,7 @@ const postHandler = middy(
     return { body: '', statusCode: 201 };
   })
   .use(jsonBodyParser())
-  .use(validator({ inputSchema }))
+  .use(validator({ inputSchema: schema }))
   .use(storageMiddleware())
   .use(httpErrorHandler());
 
