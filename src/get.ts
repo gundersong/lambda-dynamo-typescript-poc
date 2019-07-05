@@ -18,9 +18,7 @@ const getHandler = middy(
 
     const data: IDynamoTodo = await event.storage.get(id);
 
-    if (!data) {
-      throw new createError.NotFound();
-    }
+    if (!data) { throw new createError.NotFound(); }
 
     return {
       body: JSON.stringify({ data }, null, 2),

@@ -14,9 +14,11 @@ export interface IStorage {
 }
 
 class Storage implements IStorage {
+  private tableName: string;
   private ddb: DynamoDB.DocumentClient;
 
   constructor() {
+    this.tableName = process.env.TABLE_NAME;
     this.ddb = new DynamoDB.DocumentClient({
       httpOptions: {
         agent: new https.Agent({
@@ -24,17 +26,13 @@ class Storage implements IStorage {
           rejectUnauthorized: true,
         }),
       },
-      region: process.env.sAWS_REGION,
+      region: process.env.AWS_REGION,
     });
   }
 
   public async get(id: string): Promise<any> {
-    const item = await this.ddb.get({
-      Key: { id },
-      TableName: process.env.TABLE_NAME,
-    })
-      .promise()
-      .catch((err) => {
+    const item = await this.ddb.get({ Key: { id }, TableName: this.tableName })
+      .promise().catch((err) => {
         throw new createError.InternalServerError(err.message);
       });
 
@@ -42,23 +40,15 @@ class Storage implements IStorage {
   }
 
   public async put(item: IDynamoItem) {
-    return this.ddb.put({
-      Item: item,
-      TableName: process.env.TABLE_NAME,
-    })
-      .promise()
-      .catch((err) => {
+    return this.ddb.put({ Item: item, TableName: this.tableName })
+      .promise().catch((err) => {
         throw new createError.InternalServerError(err.message);
       });
   }
 
   public async delete(id: string) {
-    return this.ddb.delete({
-      Key: { id },
-      TableName: process.env.TABLE_NAME,
-    })
-      .promise()
-      .catch((err) => {
+    return this.ddb.delete({ Key: { id }, TableName: this.tableName })
+      .promise().catch((err) => {
         throw new createError.InternalServerError(err.message);
       });
   }

@@ -7,6 +7,7 @@ import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
 import { storageMiddleware } from './lib/storageMiddleware';
 import { inputSchema } from './schema';
 import { IStorage } from './storage';
+import { IDynamoTodo } from './types';
 
 interface IPostEvent extends APIGatewayProxyEvent {
   body: any;
@@ -17,7 +18,9 @@ const postHandler = middy(
   async (event: IPostEvent): Promise<APIGatewayProxyResult> => {
     const { body, pathParameters: { id } } = event;
 
-    await event.storage.put({ ...body, id });
+    const data: IDynamoTodo = { ...body, id };
+
+    await event.storage.put(data);
 
     return {
       body: '',
