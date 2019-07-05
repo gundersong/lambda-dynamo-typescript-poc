@@ -1,10 +1,10 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
-import { httpErrorHandler } from 'middy/middlewares';
 import 'source-map-support/register';
-import { storageMiddleware } from './lib/storageMiddleware';
 
+import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
 import { IStorage } from './lib/storage';
+import { storageMiddleware } from './lib/storageMiddleware';
 
 interface IDeleteEvent extends APIGatewayProxyEvent {
   storage: IStorage;

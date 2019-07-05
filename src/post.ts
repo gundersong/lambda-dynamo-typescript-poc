@@ -2,11 +2,11 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
 import { jsonBodyParser, validator } from 'middy/middlewares';
 import 'source-map-support/register';
-import { httpErrorHandler } from './lib/httpErrorHandler';
+
+import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
+import { IStorage } from './lib/storage';
 import { storageMiddleware } from './lib/storageMiddleware';
 import { inputSchema } from './schema';
-
-import { IStorage } from './lib/storage';
 
 interface IPostEvent extends APIGatewayProxyEvent {
   body: any;
