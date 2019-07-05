@@ -3,8 +3,8 @@ import middy from 'middy';
 import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
-import { IStorage } from './lib/storage';
 import { storageMiddleware } from './lib/storageMiddleware';
+import { IStorage } from './storage';
 
 interface IListEvent extends APIGatewayProxyEvent {
   storage: IStorage;

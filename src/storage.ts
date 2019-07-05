@@ -1,4 +1,6 @@
 import * as DynamoDB from 'aws-sdk/clients/dynamodb';
+import createError from 'http-errors';
+import https from 'https';
 
 interface IDynamoItem {
   id: string;
@@ -6,7 +8,7 @@ interface IDynamoItem {
 }
 
 export interface IStorage {
-  get: <T>(id: string) => Promise<T | null>;
+  get: (id: string) => Promise<any>;
   put: (item: IDynamoItem) => Promise<any>;
   delete: (id: string) => Promise<any>;
 }
@@ -15,21 +17,28 @@ class Storage implements IStorage {
   private ddb: DynamoDB.DocumentClient;
 
   constructor() {
-    console.log('in storage constructor');
     this.ddb = new DynamoDB.DocumentClient({
-      region: process.env.AWS_REGION,
+      httpOptions: {
+        agent: new https.Agent({
+          keepAlive: true,
+          rejectUnauthorized: true,
+        }),
+      },
+      region: process.env.sAWS_REGION,
     });
   }
 
-  public async get<T>(id: string): Promise<T | null> {
+  public async get(id: string): Promise<any> {
     const item = await this.ddb.get({
       Key: { id },
       TableName: process.env.TABLE_NAME,
     })
       .promise()
-      .catch(() => null);
+      .catch((err) => {
+        throw new createError.InternalServerError(err.message);
+      });
 
-    return item ? item.Item : null;
+    return item.Item;
   }
 
   public async put(item: IDynamoItem) {
@@ -38,7 +47,9 @@ class Storage implements IStorage {
       TableName: process.env.TABLE_NAME,
     })
       .promise()
-      .catch(() => null);
+      .catch((err) => {
+        throw new createError.InternalServerError(err.message);
+      });
   }
 
   public async delete(id: string) {
@@ -47,7 +58,9 @@ class Storage implements IStorage {
       TableName: process.env.TABLE_NAME,
     })
       .promise()
-      .catch(() => null);
+      .catch((err) => {
+        throw new createError.InternalServerError(err.message);
+      });
   }
 }
 

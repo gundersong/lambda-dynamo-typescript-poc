@@ -27,6 +27,7 @@ provider:
 functions:
   getTodo:
     handler: src/get.handler
+    memorySize: 128
     events:
       - http:
           method: get
@@ -34,6 +35,7 @@ functions:
 
   listTodo:
     handler: src/list.handler
+    memorySize: 128
     events:
       - http:
           method: get
@@ -41,6 +43,7 @@ functions:
 
   postTodo:
     handler: src/post.handler
+    memorySize: 128
     events:
       - http:
           method: post
@@ -48,6 +51,7 @@ functions:
 
   deleteTodo:
     handler: src/delete.handler
+    memorySize: 128
     events:
       - http:
           method: delete

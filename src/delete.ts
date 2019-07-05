@@ -3,8 +3,8 @@ import middy from 'middy';
 import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
-import { IStorage } from './lib/storage';
 import { storageMiddleware } from './lib/storageMiddleware';
+import { IStorage } from './storage';
 
 interface IDeleteEvent extends APIGatewayProxyEvent {
   storage: IStorage;
@@ -16,10 +16,7 @@ const deleteHandler = middy(
 
     await event.storage.delete(id);
 
-    return {
-      body: '',
-      statusCode: 203,
-    };
+    return { body: '', statusCode: 203 };
   })
   .use(storageMiddleware())
   .use(httpErrorHandler());

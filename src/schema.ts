@@ -14,7 +14,7 @@ export const inputSchema = {
       },
       required: ['description', 'complete'],
       type: 'object',
-    }
+    },
   },
   type: 'object',
 };

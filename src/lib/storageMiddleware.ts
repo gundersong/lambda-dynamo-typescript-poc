@@ -1,5 +1,5 @@
 import middy from 'middy';
-import { IStorage, storage } from './storage';
+import { IStorage, storage } from '../storage';
 
 export const storageMiddleware: middy.Middleware<IStorage> = () => {
   return {
