@@ -1,0 +1,15 @@
+# package directories
+node_modules
+jspm_packages
+
+# mac directories
+.DS_Store
+
+# Serverless directories
+.serverless
+
+# VSCode directories
+.vscode
+
+# Webpack directories
+.webpack

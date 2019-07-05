@@ -1,0 +1,70 @@
+service:
+  name: lambda-dynamo-typescript-poc
+
+plugins:
+  - serverless-offline
+  - serverless-webpack
+
+package:
+  individually: true
+  include:
+    - src/**
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  region: ${opt:region, 'eu-west-2'}
+  environment:
+    TABLE_NAME: todo_table
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'dynamodb:PutItem'
+        - 'dynamodb:GetItem'
+        - 'dynamodb:DeleteItem'
+      Resource: arn:aws:dynamodb:*:*:table/${self:provider.environment.TABLE_NAME}
+
+functions:
+  getTodo:
+    handler: src/get.handler
+    events:
+      - http:
+          method: get
+          path: todo/{id}
+
+  listTodo:
+    handler: src/list.handler
+    events:
+      - http:
+          method: get
+          path: todo
+
+  postTodo:
+    handler: src/post.handler
+    events:
+      - http:
+          method: post
+          path: todo/{id}
+
+  deleteTodo:
+    handler: src/delete.handler
+    events:
+      - http:
+          method: delete
+          path: todo/{id}
+
+resources:
+  Resources:
+    todoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.TABLE_NAME}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        SSESpecification:
+          SSEEnabled: true
