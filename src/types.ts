@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { IStorage } from './storage';
+import { IStorage } from './lib/storage';
 
 export interface ITodo {
   /**

@@ -5,13 +5,17 @@
             "properties": {
                 "complete": {
                     "description": "A boolean indicating whether the Todo has been completed or not",
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "description": {
                     "description": "The description of the Todo entry",
                     "type": "string"
                 }
             },
+            "required": [
+                "complete",
+                "description"
+            ],
             "type": "object"
         }
     },
@@ -21,5 +25,9 @@
             "description": "A Todo object describing a task to be done"
         }
     },
+    "required": [
+        "body"
+    ],
     "type": "object"
 }
+
