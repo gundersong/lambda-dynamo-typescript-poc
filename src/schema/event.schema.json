@@ -1,6 +1,21 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
+        "IHeaders": {
+            "properties": {
+                "Content-Type": {
+                    "description": "Ensure the content-type is application/json",
+                    "enum": [
+                        "application/json"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Content-Type"
+            ],
+            "type": "object"
+        },
         "ITodo": {
             "properties": {
                 "complete": {
@@ -22,11 +37,16 @@
     "properties": {
         "body": {
             "$ref": "#/definitions/ITodo",
-            "description": "A Todo object describing a task to be done"
+            "description": "The body of the event"
+        },
+        "headers": {
+            "$ref": "#/definitions/IHeaders",
+            "description": "The required event headers"
         }
     },
     "required": [
-        "body"
+        "body",
+        "headers"
     ],
     "type": "object"
 }

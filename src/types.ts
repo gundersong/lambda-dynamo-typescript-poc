@@ -12,9 +12,20 @@ export interface ITodo {
   description: string;
 }
 
+export interface IHeaders {
+  /**
+   * @description Ensure the content-type is application/json
+   */
+  'Content-Type': 'application/json';
+}
+
 export interface IEvent {
   /**
-   * @description A Todo object describing a task to be done
+   * @description The required event headers
+   */
+  headers: IHeaders;
+  /**
+   * @description The body of the event
    */
   body: ITodo;
 }

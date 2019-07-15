@@ -3,9 +3,9 @@ import middy from 'middy';
 import { cors, jsonBodyParser, validator } from 'middy/middlewares';
 import 'source-map-support/register';
 
-import schema from './event.schema.json';
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
 import { storageMiddleware } from './lib/storageMiddleware';
+import schema from './schema/event.schema.json';
 import { IStorageAPIGatewayProxyEvent, ITodo } from './types';
 
 type IPostEvent = Modify<IStorageAPIGatewayProxyEvent, {
