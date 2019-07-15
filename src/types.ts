@@ -10,9 +10,13 @@ export interface ITodo {
    * @description The description of the Todo entry
    */
   description: string;
+  /**
+   * @description The description of the Todo entry
+   */
+  test: string;
 }
 
-export interface IBody {
+export interface IEvent {
   /**
    * @description A Todo object describing a task to be done
    */

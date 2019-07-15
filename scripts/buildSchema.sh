@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -e
 
-yarn typescript-json-schema ./src/types.ts IBody -o ./src/schema.json --ignore-errors --required
+yarn typescript-json-schema ./src/types.ts IEvent -o ./src/schema/event.schema.json --ignore-errors --required
 

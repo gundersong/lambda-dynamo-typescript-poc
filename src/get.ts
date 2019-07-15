@@ -1,6 +1,7 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import createError from 'http-errors';
+import httpErrors from 'http-errors';
 import middy from 'middy';
+import { cors } from 'middy/middlewares';
 import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
@@ -13,7 +14,7 @@ const getHandler = middy(
 
     const data: IDynamoTodo = await event.storage.get(id);
 
-    if (!data) { throw new createError.NotFound(); }
+    if (!data) { throw new httpErrors.NotFound(); }
 
     return {
       body: JSON.stringify({ data }, null, 2),
@@ -21,6 +22,7 @@ const getHandler = middy(
     };
   })
   .use(storageMiddleware())
-  .use(httpErrorHandler());
+  .use(httpErrorHandler())
+  .use(cors());
 
 export const handler = getHandler;

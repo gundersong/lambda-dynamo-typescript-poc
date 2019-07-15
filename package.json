@@ -1,9 +1,11 @@
 {
   "name": "lambda-dynamo-typescript-poc",
   "version": "1.0.0",
-  "description": "Serverless webpack example using Typescript",
+  "description": "Simple Lambda and Dynamo api example using Serverless and Typescript",
   "main": "handler.js",
   "scripts": {
+    "build-schema": "./scripts/buildSchema.sh",
+    "check-schema": "npm run build-schema && ./scripts/checkSchema.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
@@ -14,6 +16,7 @@
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/node": "^10.12.18",
+    "husky": "^3.0.0",
     "serverless": "^1.46.1",
     "serverless-offline": "^5.6.0",
     "serverless-webpack": "^5.2.0",
@@ -23,6 +26,11 @@
     "typescript-json-schema": "^0.38.3",
     "webpack": "^4.29.0"
   },
-  "author": "The serverless webpack authors (https://github.com/elastic-coders/serverless-webpack)",
-  "license": "MIT"
+  "author": "George Gunderson",
+  "license": "MIT",
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
+  }
 }

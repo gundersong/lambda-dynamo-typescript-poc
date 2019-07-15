@@ -1,5 +1,5 @@
 import * as DynamoDB from 'aws-sdk/clients/dynamodb';
-import createError from 'http-errors';
+import httpErrors from 'http-errors';
 import https from 'https';
 
 interface IDynamoItem {
@@ -33,7 +33,7 @@ class Storage implements IStorage {
   public async get(id: string): Promise<any> {
     const { Item } = await this.ddb.get({ Key: { id }, TableName: this.tableName })
       .promise().catch((err) => {
-        throw new createError.InternalServerError(err.message);
+        throw new httpErrors.InternalServerError(err.message);
       });
     return Item;
   }
@@ -41,14 +41,14 @@ class Storage implements IStorage {
   public async put(item: IDynamoItem) {
     return this.ddb.put({ Item: item, TableName: this.tableName })
       .promise().catch((err) => {
-        throw new createError.InternalServerError(err.message);
+        throw new httpErrors.InternalServerError(err.message);
       });
   }
 
   public async delete(id: string) {
     return this.ddb.delete({ Key: { id }, TableName: this.tableName })
       .promise().catch((err) => {
-        throw new createError.InternalServerError(err.message);
+        throw new httpErrors.InternalServerError(err.message);
       });
   }
 }

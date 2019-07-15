@@ -1,5 +1,6 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
+import { cors } from 'middy/middlewares';
 import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
@@ -15,6 +16,7 @@ const deleteHandler = middy(
     return { body: '', statusCode: 203 };
   })
   .use(storageMiddleware())
-  .use(httpErrorHandler());
+  .use(httpErrorHandler())
+  .use(cors());
 
 export const handler = deleteHandler;

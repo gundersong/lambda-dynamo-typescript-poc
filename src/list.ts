@@ -1,5 +1,6 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
+import { cors } from 'middy/middlewares';
 import 'source-map-support/register';
 
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
@@ -16,6 +17,7 @@ const listHandler = middy(
     };
   })
   .use(storageMiddleware())
-  .use(httpErrorHandler());
+  .use(httpErrorHandler())
+  .use(cors());
 
 export const handler = listHandler;

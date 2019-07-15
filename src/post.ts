@@ -1,11 +1,11 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
-import { jsonBodyParser, validator } from 'middy/middlewares';
+import { cors, jsonBodyParser, validator } from 'middy/middlewares';
 import 'source-map-support/register';
 
+import schema from './event.schema.json';
 import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
 import { storageMiddleware } from './lib/storageMiddleware';
-import schema from './schema.json';
 import { IStorageAPIGatewayProxyEvent, ITodo } from './types';
 
 type IPostEvent = Modify<IStorageAPIGatewayProxyEvent, {
@@ -14,15 +14,19 @@ type IPostEvent = Modify<IStorageAPIGatewayProxyEvent, {
 
 const postHandler = middy(
   async (event: IPostEvent): Promise<APIGatewayProxyResult> => {
-    const { body, pathParameters: { id } } = event;
+    const {
+      body: { complete, description },
+      pathParameters: { id },
+    } = event;
 
-    await event.storage.put({ ...body, id });
+    await event.storage.put({ id, complete, description });
 
     return { body: '', statusCode: 201 };
   })
   .use(jsonBodyParser())
   .use(validator({ inputSchema: schema }))
   .use(storageMiddleware())
-  .use(httpErrorHandler());
+  .use(httpErrorHandler())
+  .use(cors());
 
 export const handler = postHandler;
