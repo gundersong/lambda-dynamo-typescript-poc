@@ -10,10 +10,6 @@ export interface ITodo {
    * @description The description of the Todo entry
    */
   description: string;
-  /**
-   * @description The description of the Todo entry
-   */
-  test: string;
 }
 
 export interface IEvent {

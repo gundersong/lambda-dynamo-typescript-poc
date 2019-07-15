@@ -10,16 +10,11 @@
                 "description": {
                     "description": "The description of the Todo entry",
                     "type": "string"
-                },
-                "test": {
-                    "description": "The description of the Todo entry",
-                    "type": "string"
                 }
             },
             "required": [
                 "complete",
-                "description",
-                "test"
+                "description"
             ],
             "type": "object"
         }
