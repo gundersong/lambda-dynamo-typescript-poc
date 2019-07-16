@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { jsonBodyParser, validator } from 'middy/middlewares';
+import { validator } from 'middy/middlewares';
 import 'source-map-support/register';
 
 import { httpHandler } from './lib/httpHandler';
@@ -21,7 +21,6 @@ const postHandler = httpHandler(
 
     return { body: '', statusCode: 201 };
   })
-  .use(jsonBodyParser())
   .use(validator({ inputSchema: schema }));
 
 export const handler = postHandler;
