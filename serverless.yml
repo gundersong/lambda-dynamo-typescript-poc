@@ -14,6 +14,7 @@ provider:
   name: aws
   runtime: nodejs10.x
   region: ${opt:region, 'eu-west-2'}
+  memorySize: 128
   environment:
     TABLE_NAME: todo_table
   iamRoleStatements:
@@ -27,35 +28,35 @@ provider:
 functions:
   get:
     handler: src/get.handler
-    memorySize: 128
     events:
       - http:
           method: get
           path: todo/{id}
+          cors: true
 
   list:
     handler: src/list.handler
-    memorySize: 128
     events:
       - http:
           method: get
           path: todo
+          cors: true
 
   post:
     handler: src/post.handler
-    memorySize: 128
     events:
       - http:
           method: post
           path: todo/{id}
+          cors: true
 
   delete:
     handler: src/delete.handler
-    memorySize: 128
     events:
       - http:
           method: delete
           path: todo/{id}
+          cors: true
 
 resources:
   Resources:

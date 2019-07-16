@@ -1,13 +1,10 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import middy from 'middy';
-import { cors } from 'middy/middlewares';
 import 'source-map-support/register';
 
-import { httpErrorHandler } from './lib/httpErrorHandlerMiddleware';
-import { storageMiddleware } from './lib/storageMiddleware';
+import { httpHandler } from './lib/httpHandler';
 import { IStorageAPIGatewayProxyEvent } from './types';
 
-const listHandler = middy(
+const listHandler = httpHandler(
   async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     console.log(event.path);
 
@@ -15,9 +12,6 @@ const listHandler = middy(
       body: JSON.stringify({ data: [] }, null, 2),
       statusCode: 200,
     };
-  })
-  .use(storageMiddleware())
-  .use(httpErrorHandler())
-  .use(cors());
+  });
 
 export const handler = listHandler;
