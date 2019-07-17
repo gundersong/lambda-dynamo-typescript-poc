@@ -1,7 +1,11 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
 import { IStorage } from './lib/storage';
 
-export interface ITodo {
+export interface IStorageAPIGatewayProxyEvent extends APIGatewayProxyEvent {
+  storage: IStorage;
+}
+
+export interface IPutBody {
   /**
    * @description A boolean indicating whether the Todo has been completed or not
    */
@@ -19,7 +23,19 @@ export interface IHeaders {
   'Content-Type': 'application/json';
 }
 
-export interface IEvent {
+export type IPutEvent = Modify<IStorageAPIGatewayProxyEvent, {
+  body: IPutBody;
+}>;
+
+export interface IDynamoItem extends IPutBody {
+  id: string;
+}
+
+/**
+ * PUT
+ * @description Schema for PUT request event
+ */
+export interface IPutRequestSchema {
   /**
    * @description The required event headers
    */
@@ -27,13 +43,5 @@ export interface IEvent {
   /**
    * @description The body of the event
    */
-  body: ITodo;
-}
-
-export interface IDynamoTodo extends ITodo {
-  id: string;
-}
-
-export interface IStorageAPIGatewayProxyEvent extends APIGatewayProxyEvent {
-  storage: IStorage;
+  body: IPutBody;
 }

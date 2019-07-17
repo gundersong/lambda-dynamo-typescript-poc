@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
+file="./src/schema/putEvent.schema.json"
+
 echo "Building schema..."
-yarn typescript-json-schema ./src/types.ts IEvent -o ./src/schema/event.schema.json --ignore-errors --required
+yarn typescript-json-schema ./src/types.ts IPutRequestSchema --ignore-errors --required -o $file
 

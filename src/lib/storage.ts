@@ -8,12 +8,12 @@ interface IDynamoItem {
 }
 
 export interface IStorage {
-  get: (id: string) => Promise<any>;
+  get: <T>(id: string) => Promise<T>;
   put: (item: IDynamoItem) => Promise<any>;
   delete: (id: string) => Promise<any>;
 }
 
-class Storage implements IStorage {
+export class Storage implements IStorage {
   private tableName: string;
   private ddb: DynamoDB.DocumentClient;
 
@@ -52,5 +52,3 @@ class Storage implements IStorage {
       });
   }
 }
-
-export const storage = new Storage();

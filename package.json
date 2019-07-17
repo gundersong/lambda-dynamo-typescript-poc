@@ -6,7 +6,8 @@
   "scripts": {
     "build-schema": "./scripts/buildSchema.sh",
     "check-schema": "npm run build-schema && ./scripts/checkSchema.sh",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "yarn tslint 'src/**/*.ts'"
   },
   "dependencies": {
     "aws-sdk": "^2.488.0",

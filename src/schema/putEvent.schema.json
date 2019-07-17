@@ -16,7 +16,7 @@
             ],
             "type": "object"
         },
-        "ITodo": {
+        "IPutBody": {
             "properties": {
                 "complete": {
                     "description": "A boolean indicating whether the Todo has been completed or not",
@@ -34,9 +34,10 @@
             "type": "object"
         }
     },
+    "description": "Schema for PUT request event",
     "properties": {
         "body": {
-            "$ref": "#/definitions/ITodo",
+            "$ref": "#/definitions/IPutBody",
             "description": "The body of the event"
         },
         "headers": {

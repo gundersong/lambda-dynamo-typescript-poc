@@ -1,20 +1,22 @@
-import { APIGatewayProxyResult } from 'aws-lambda';
 import middy from 'middy';
-import { cors, jsonBodyParser } from 'middy/middlewares';
+import { cors, httpHeaderNormalizer, jsonBodyParser } from 'middy/middlewares';
+import { eventLogging } from './eventLoggingMiddleware';
 import { httpErrorHandler } from './httpErrorHandlerMiddleware';
 import { storageMiddleware } from './storageMiddleware';
 
-type HandlerFunction<T> = (event: T) => Promise<APIGatewayProxyResult>;
+type HandlerFunction<T, R> = (event: T) => Promise<R>;
 
 /**
  * A shared handler for all functions which implements all the shared middleware
  */
-export function httpHandler<T>(handlerFunction: HandlerFunction<T>): middy.Middy<T, unknown> {
+export function httpHandler<T, R>(handlerFunction: HandlerFunction<T, R>): middy.Middy<T, R> {
   const middyHttpHandler = middy(handlerFunction)
     .use(storageMiddleware())
     .use(jsonBodyParser())
     .use(httpErrorHandler())
-    .use(cors());
+    .use(cors())
+    .use(httpHeaderNormalizer())
+    .use(eventLogging());
 
   return middyHttpHandler;
 }

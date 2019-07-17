@@ -10,13 +10,17 @@ package:
   include:
     - src/**
 
+custom:
+  apiEntity: todos
+
 provider:
   name: aws
   runtime: nodejs10.x
   region: ${opt:region, 'eu-west-2'}
   memorySize: 128
   environment:
-    TABLE_NAME: todo_table
+    TABLE_NAME: ddb-${self:custom.apiEntity}
+    API_ENTITY: ${self:custom.apiEntity}
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
@@ -31,7 +35,7 @@ functions:
     events:
       - http:
           method: get
-          path: todo/{id}
+          path: ${self:custom.apiEntity}/{id}
           cors: true
 
   list:
@@ -39,15 +43,15 @@ functions:
     events:
       - http:
           method: get
-          path: todo
+          path: ${self:custom.apiEntity}
           cors: true
 
-  post:
-    handler: src/post.handler
+  put:
+    handler: src/put.handler
     events:
       - http:
-          method: post
-          path: todo/{id}
+          method: put
+          path: ${self:custom.apiEntity}/{id}
           cors: true
 
   delete:
@@ -55,12 +59,12 @@ functions:
     events:
       - http:
           method: delete
-          path: todo/{id}
+          path: ${self:custom.apiEntity}/{id}
           cors: true
 
 resources:
   Resources:
-    todoTable:
+    DynamoTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:provider.environment.TABLE_NAME}
