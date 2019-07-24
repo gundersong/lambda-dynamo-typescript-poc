@@ -1,5 +1,5 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
-import { validator } from 'middy/middlewares';
+import { jsonBodyParser, validator } from 'middy/middlewares';
 import 'source-map-support/register';
 
 import { httpHandler } from './lib/httpHandler';
@@ -20,12 +20,13 @@ const putHandler = httpHandler(
       id,
     };
 
-    logger.info({ message: 'Putting item to storage', details: item });
+    logger.info('Putting item to storage', { item });
 
     await event.storage.put(item);
 
     return { body: '', statusCode: 201 };
   })
+  .use(jsonBodyParser())
   .use(validator({ inputSchema: schema }));
 
 export const handler = putHandler;

@@ -1,33 +1,24 @@
-import * as DynamoDB from 'aws-sdk/clients/dynamodb';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import httpErrors from 'http-errors';
-import https from 'https';
 
 interface IDynamoItem {
   id: string;
   [key: string]: any;
 }
 
-export interface IStorage {
+export interface IDynamoStorage {
   get: <T>(id: string) => Promise<T>;
   put: (item: IDynamoItem) => Promise<any>;
   delete: (id: string) => Promise<any>;
 }
 
-export class Storage implements IStorage {
+export class DynamoStorage implements IDynamoStorage {
   private tableName: string;
-  private ddb: DynamoDB.DocumentClient;
+  private ddb: DocumentClient;
 
-  constructor() {
+  constructor(ddb: DocumentClient) {
     this.tableName = process.env.TABLE_NAME;
-    this.ddb = new DynamoDB.DocumentClient({
-      httpOptions: {
-        agent: new https.Agent({
-          keepAlive: true,
-          rejectUnauthorized: true,
-        }),
-      },
-      region: process.env.AWS_REGION,
-    });
+    this.ddb = ddb;
   }
 
   public async get(id: string): Promise<any> {

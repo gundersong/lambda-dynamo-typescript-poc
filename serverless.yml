@@ -2,8 +2,9 @@ service:
   name: lambda-dynamo-typescript-poc
 
 plugins:
-  - serverless-offline
   - serverless-webpack
+  - serverless-dynamodb-local
+  - serverless-offline
 
 package:
   individually: true
@@ -12,6 +13,17 @@ package:
 
 custom:
   apiEntity: todos
+  serverless-offline:
+    host: 0.0.0.0
+    port: ${self:provider.environment.API_OFFLINE_PORT}
+  dynamodb: # Documentation: https://www.npmjs.com/package/serverless-dynamodb-local
+    stages:
+      - dev
+    start:
+      host: 0.0.0.0
+      port: ${self:provider.environment.DYNAMO_OFFLINE_PORT}
+      inMemory: true
+      migrate: true
 
 provider:
   name: aws
@@ -19,8 +31,10 @@ provider:
   region: ${opt:region, 'eu-west-2'}
   memorySize: 128
   environment:
-    TABLE_NAME: ddb-${self:custom.apiEntity}
     API_ENTITY: ${self:custom.apiEntity}
+    API_OFFLINE_PORT: ${env:API_PORT}
+    DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT}
+    TABLE_NAME: ddb-${self:custom.apiEntity}
   iamRoleStatements:
     - Effect: 'Allow'
       Action:

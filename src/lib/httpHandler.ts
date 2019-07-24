@@ -1,5 +1,5 @@
 import middy from 'middy';
-import { cors, httpHeaderNormalizer, jsonBodyParser } from 'middy/middlewares';
+import { cors, httpHeaderNormalizer } from 'middy/middlewares';
 import { eventLogging } from './eventLoggingMiddleware';
 import { httpErrorHandler } from './httpErrorHandlerMiddleware';
 import { storageMiddleware } from './storageMiddleware';
@@ -12,7 +12,6 @@ type HandlerFunction<T, R> = (event: T) => Promise<R>;
 export function httpHandler<T, R>(handlerFunction: HandlerFunction<T, R>): middy.Middy<T, R> {
   const middyHttpHandler = middy(handlerFunction)
     .use(storageMiddleware())
-    .use(jsonBodyParser())
     .use(httpErrorHandler())
     .use(cors())
     .use(httpHeaderNormalizer())

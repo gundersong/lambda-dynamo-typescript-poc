@@ -10,16 +10,16 @@ const getHandler = httpHandler(
   async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const { pathParameters: { id } } = event;
 
-    logger.info({ message: `Getting item from storage with id: ${id}` });
+    logger.info(`Getting item from storage with id: ${id}`);
 
     const data = await event.storage.get<IDynamoItem>(id);
 
     if (!data) {
-      logger.info({ message: 'No item returned from storage, returning 404' });
+      logger.info('No item returned from storage, returning 404');
       throw new httpErrors.NotFound();
     }
 
-    logger.info({ message: `Successfully retrieved item from storage`, details: data });
+    logger.info(`Successfully retrieved item from storage`, { data });
 
     return {
       body: JSON.stringify({ data }, null, 2),

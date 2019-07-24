@@ -9,7 +9,7 @@ const deleteHandler = httpHandler(
   async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
     const { pathParameters: { id } } = event;
 
-    logger.info({ message: `Deleting item from storage with id: ${id}` });
+    logger.info(`Deleting item from storage with id: ${id}`);
 
     await event.storage.delete(id);
 

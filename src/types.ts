@@ -1,8 +1,8 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { IStorage } from './lib/storage';
+import { IDynamoStorage } from './lib/storage';
 
 export interface IStorageAPIGatewayProxyEvent extends APIGatewayProxyEvent {
-  storage: IStorage;
+  storage: IDynamoStorage;
 }
 
 export interface IPutBody {

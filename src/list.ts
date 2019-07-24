@@ -7,7 +7,7 @@ import { IStorageAPIGatewayProxyEvent } from './types';
 
 const listHandler = httpHandler(
   async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    logger.info({ message: 'Path', details: event.path });
+    logger.info(event.path);
 
     return {
       body: JSON.stringify({ data: [] }, null, 2),

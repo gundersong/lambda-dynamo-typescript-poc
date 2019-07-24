@@ -1,0 +1,14 @@
+version: "3"
+services:
+  api:
+    # env_file: .env
+    build:
+      context: .
+      args:
+          api_port: ${API_PORT}
+          dynamo_port: ${DYNAMO_PORT}
+    ports:
+      - "${API_PORT}:${API_PORT}"
+      - "${DYNAMO_PORT}:${DYNAMO_PORT}"
+    volumes:
+      - ./src:/app/src
