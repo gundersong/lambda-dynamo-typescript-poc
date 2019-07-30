@@ -9,8 +9,8 @@ export const eventLogging: middy.Middleware<any> = () => ({
     next();
   },
   before: (handler, next) => {
-    const { body, headers, pathParameters: { id }, methodArn } = handler.event;
-    const details = { id, body, headers, methodArn };
+    const { body, headers, pathParameters: { id } } = handler.event;
+    const details = { id, body, headers };
     logger.info('Event Received', details);
 
     next();
