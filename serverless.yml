@@ -32,8 +32,8 @@ provider:
   memorySize: 128
   environment:
     API_ENTITY: ${self:custom.apiEntity}
-    API_OFFLINE_PORT: ${env:API_PORT}
-    DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT}
+    API_OFFLINE_PORT: ${env:API_PORT, '3000'}
+    DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT, '8000'}
     TABLE_NAME: ddb-${self:custom.apiEntity}
   iamRoleStatements:
     - Effect: 'Allow'
