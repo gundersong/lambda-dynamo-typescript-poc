@@ -21,7 +21,7 @@ You can then hit the endpoint with curl or the http client of your choice e.g.
 
 ### PUT
   ```bash
-  curl -X PUT http://localhost:4567/todos/1 \
+  curl -X PUT http://localhost:4567/v1/todos/1 \
   -H 'Content-Type: application/json' \
   -d '{"description": "Get stuff done", "complete": true}'
   ```

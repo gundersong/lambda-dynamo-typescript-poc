@@ -5,14 +5,13 @@ import { httpHandler } from './lib/httpHandler';
 import { logger } from './lib/logger';
 import { IStorageAPIGatewayProxyEvent } from './types';
 
-const listHandler = httpHandler(
-  async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    logger.info(event.path);
+const list = async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+  logger.info(event.path);
 
-    return {
-      body: JSON.stringify({ data: [] }, null, 2),
-      statusCode: 200,
-    };
-  });
+  return {
+    body: JSON.stringify({ data: [] }, null, 2),
+    statusCode: 200,
+  };
+};
 
-export const handler = listHandler;
+export const handler = httpHandler(list);

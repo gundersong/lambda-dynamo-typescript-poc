@@ -17,6 +17,7 @@
             "type": "object"
         },
         "IPutBody": {
+            "additionalProperties": false,
             "properties": {
                 "complete": {
                     "description": "A boolean indicating whether the Todo has been completed or not",

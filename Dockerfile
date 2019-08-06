@@ -35,7 +35,7 @@ COPY . ./
 
 RUN npm i -g yarn
 RUN yarn
-RUN yarn serverless dynamodb install
+RUN yarn serverless dynamodb install > /dev/null 2>&1
 
 CMD [ "yarn", "serverless", "offline", "start" ]
 

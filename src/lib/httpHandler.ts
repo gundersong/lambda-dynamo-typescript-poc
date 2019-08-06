@@ -11,11 +11,11 @@ type HandlerFunction<T, R> = (event: T) => Promise<R>;
  */
 export function httpHandler<T, R>(handlerFunction: HandlerFunction<T, R>): middy.Middy<T, R> {
   const middyHttpHandler = middy(handlerFunction)
+    .use(eventLogging())
     .use(storageMiddleware())
     .use(httpErrorHandler())
     .use(cors())
-    .use(httpHeaderNormalizer())
-    .use(eventLogging());
+    .use(httpHeaderNormalizer());
 
   return middyHttpHandler;
 }

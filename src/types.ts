@@ -5,6 +5,9 @@ export interface IStorageAPIGatewayProxyEvent extends APIGatewayProxyEvent {
   storage: IDynamoStorage;
 }
 
+/**
+ * @additionalProperties false
+ */
 export interface IPutBody {
   /**
    * @description A boolean indicating whether the Todo has been completed or not

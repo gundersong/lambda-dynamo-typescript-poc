@@ -13,6 +13,8 @@ package:
 
 custom:
   apiEntity: todos
+  version: v1
+  pathPrefix: ${self:custom.version}/${self:custom.apiEntity}
   serverless-offline:
     host: 0.0.0.0
     port: ${self:provider.environment.API_OFFLINE_PORT}
@@ -49,7 +51,7 @@ functions:
     events:
       - http:
           method: get
-          path: ${self:custom.apiEntity}/{id}
+          path: ${self:custom.pathPrefix}/{id}
           cors: true
 
   list:
@@ -57,7 +59,7 @@ functions:
     events:
       - http:
           method: get
-          path: ${self:custom.apiEntity}
+          path: ${self:custom.pathPrefix}
           cors: true
 
   put:
@@ -65,7 +67,7 @@ functions:
     events:
       - http:
           method: put
-          path: ${self:custom.apiEntity}/{id}
+          path: ${self:custom.pathPrefix}/{id}
           cors: true
 
   delete:
@@ -73,7 +75,7 @@ functions:
     events:
       - http:
           method: delete
-          path: ${self:custom.apiEntity}/{id}
+          path: ${self:custom.pathPrefix}/{id}
           cors: true
 
 resources:
