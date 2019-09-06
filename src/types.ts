@@ -1,14 +1,13 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
-import { IDynamoStorage } from './lib/storage';
 
-export interface IStorageAPIGatewayProxyEvent extends APIGatewayProxyEvent {
-  storage: IDynamoStorage;
+export interface IStoredItem extends IBody {
+  id: string;
 }
 
 /**
  * @additionalProperties false
  */
-export interface IPutBody {
+export interface IBody {
   /**
    * @description A boolean indicating whether the Todo has been completed or not
    */
@@ -19,19 +18,15 @@ export interface IPutBody {
   description: string;
 }
 
+export type IPutEvent = Modify<APIGatewayProxyEvent, {
+  body: IBody;
+}>;
+
 export interface IHeaders {
   /**
    * @description Ensure the content-type is application/json
    */
   'Content-Type': 'application/json';
-}
-
-export type IPutEvent = Modify<IStorageAPIGatewayProxyEvent, {
-  body: IPutBody;
-}>;
-
-export interface IDynamoItem extends IPutBody {
-  id: string;
 }
 
 /**
@@ -46,5 +41,5 @@ export interface IPutRequestSchema {
   /**
    * @description The body of the event
    */
-  body: IPutBody;
+  body: IBody;
 }

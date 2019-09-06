@@ -1,22 +1,7 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "definitions": {
-        "IHeaders": {
-            "properties": {
-                "Content-Type": {
-                    "description": "Ensure the content-type is application/json",
-                    "enum": [
-                        "application/json"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "Content-Type"
-            ],
-            "type": "object"
-        },
-        "IPutBody": {
+        "IBody": {
             "additionalProperties": false,
             "properties": {
                 "complete": {
@@ -33,12 +18,27 @@
                 "description"
             ],
             "type": "object"
+        },
+        "IHeaders": {
+            "properties": {
+                "Content-Type": {
+                    "description": "Ensure the content-type is application/json",
+                    "enum": [
+                        "application/json"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "Content-Type"
+            ],
+            "type": "object"
         }
     },
     "description": "Schema for PUT request event",
     "properties": {
         "body": {
-            "$ref": "#/definitions/IPutBody",
+            "$ref": "#/definitions/IBody",
             "description": "The body of the event"
         },
         "headers": {

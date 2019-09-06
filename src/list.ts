@@ -1,11 +1,10 @@
-import { APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import 'source-map-support/register';
 
 import { httpHandler } from './lib/httpHandler';
 import { logger } from './lib/logger';
-import { IStorageAPIGatewayProxyEvent } from './types';
 
-const list = async (event: IStorageAPIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const list = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   logger.info(event.path);
 
   return {

@@ -1,8 +1,7 @@
+import awsXRay from 'aws-xray-sdk';
 import middy from 'middy';
 import { cors, httpHeaderNormalizer } from 'middy/middlewares';
-import { eventLogging } from './eventLoggingMiddleware';
-import { httpErrorHandler } from './httpErrorHandlerMiddleware';
-import { storageMiddleware } from './storageMiddleware';
+import { eventLogging, httpErrorHandler } from './customMiddlewares';
 
 type HandlerFunction<T, R> = (event: T) => Promise<R>;
 
@@ -12,7 +11,6 @@ type HandlerFunction<T, R> = (event: T) => Promise<R>;
 export function httpHandler<T, R>(handlerFunction: HandlerFunction<T, R>): middy.Middy<T, R> {
   const middyHttpHandler = middy(handlerFunction)
     .use(eventLogging())
-    .use(storageMiddleware())
     .use(httpErrorHandler())
     .use(cors())
     .use(httpHeaderNormalizer());

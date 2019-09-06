@@ -1,10 +1,11 @@
 service:
-  name: lambda-dynamo-typescript-poc
+  name: ${self:custom.apiEntity}-service
 
 plugins:
   - serverless-webpack
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-plugin-tracing
 
 package:
   individually: true
@@ -12,18 +13,18 @@ package:
     - src/**
 
 custom:
-  apiEntity: todos
+  apiEntity: todo
   version: v1
   pathPrefix: ${self:custom.version}/${self:custom.apiEntity}
   serverless-offline:
     host: 0.0.0.0
-    port: ${self:provider.environment.API_OFFLINE_PORT}
+    port: ${env:API_PORT, '3000'}
   dynamodb: # Documentation: https://www.npmjs.com/package/serverless-dynamodb-local
     stages:
       - dev
     start:
       host: 0.0.0.0
-      port: ${self:provider.environment.DYNAMO_OFFLINE_PORT}
+      port: ${env:DYNAMO_PORT, '8000'}
       inMemory: true
       migrate: true
 
@@ -31,19 +32,40 @@ provider:
   name: aws
   runtime: nodejs10.x
   region: ${opt:region, 'eu-west-2'}
-  memorySize: 128
+  memorySize: 512
+  tracing: true
   environment:
     API_ENTITY: ${self:custom.apiEntity}
     API_OFFLINE_PORT: ${env:API_PORT, '3000'}
     DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT, '8000'}
-    TABLE_NAME: ddb-${self:custom.apiEntity}
+    TABLE_NAME:
+      Ref: DynamoTable
+    PUT_TOPIC_ARN:
+      Ref: SNSTopicPut
+    DELETE_TOPIC_ARN:
+      Ref: SNSTopicDelete
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
         - 'dynamodb:PutItem'
         - 'dynamodb:GetItem'
         - 'dynamodb:DeleteItem'
-      Resource: arn:aws:dynamodb:*:*:table/${self:provider.environment.TABLE_NAME}
+      Resource:
+        Fn::GetAtt:
+          - DynamoTable
+          - Arn
+    - Effect: 'Allow'
+      Action:
+        - 'sns:Publish'
+      Resource:
+        - Ref: SNSTopicPut
+        - Ref: SNSTopicDelete
+    - Effect: "Allow"
+      Action:
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecords"
+      Resource:
+        - "*"
 
 functions:
   get:
@@ -53,7 +75,6 @@ functions:
           method: get
           path: ${self:custom.pathPrefix}/{id}
           cors: true
-
   list:
     handler: src/list.handler
     events:
@@ -61,7 +82,6 @@ functions:
           method: get
           path: ${self:custom.pathPrefix}
           cors: true
-
   put:
     handler: src/put.handler
     events:
@@ -69,7 +89,6 @@ functions:
           method: put
           path: ${self:custom.pathPrefix}/{id}
           cors: true
-
   delete:
     handler: src/delete.handler
     events:
@@ -83,7 +102,7 @@ resources:
     DynamoTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:provider.environment.TABLE_NAME}
+        TableName: ${self:custom.apiEntity}-db
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
@@ -93,3 +112,67 @@ resources:
             KeyType: HASH
         SSESpecification:
           SSEEnabled: true
+    SNSTopicPut:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service.name}-${self:custom.apiEntity}-put
+    SSMTopicPut:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Description: "SNS topic for ${self:custom.apiEntity} put events"
+        Name: ${self:custom.apiEntity}-put
+        Type: String
+        Value:
+          Ref: SNSTopicPut
+    SNSTopicDelete:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service.name}-${self:custom.apiEntity}-delete
+    SSMTopicDeleted:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Description: "SNS topic for ${self:custom.apiEntity} deleted events"
+        Name: ${self:custom.apiEntity}-deleted
+        Type: String
+        Value:
+          Ref: SNSTopicDelete
+
+    # add to readme
+    # SQSQueue:
+    #   Type: AWS::SQS::Queue
+    #   Properties:
+    #     MessageRetentionPeriod: 345600
+    #     QueueName: ${self:service.name}-queue
+    #     ReceiveMessageWaitTimeSeconds: 20
+    #     VisibilityTimeout: 120
+    # SnsSubscription:
+    #   Type: AWS::SNS::Subscription
+    #   Properties:
+    #     Endpoint:
+    #       Fn::GetAtt:
+    #         - SQSQueue
+    #         - Arn
+    #     Protocol: sqs
+    #     TopicArn:
+    #       Ref: SNSTopicPut
+    #   DependsOn:
+    #     - SQSQueue
+    # SnsQueuePolicy:
+    #   Type: AWS::SQS::QueuePolicy
+    #   Properties:
+    #     PolicyDocument:
+    #       Version: '2012-10-17'
+    #       Statement:
+    #         - Effect: Allow
+    #           Principal: '*'
+    #           Action: sqs:SendMessage
+    #           Resource: '*'
+    #           Condition:
+    #             ArnEquals:
+    #               'aws:SourceArn':
+    #                 - Ref: SNSTopicPut
+    #                 - Ref: SNSTopicDelete
+    #     Queues:
+    #       - Ref: SQSQueue
+    #   DependsOn:
+    #     - SQSQueue
