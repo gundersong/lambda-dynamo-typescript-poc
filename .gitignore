@@ -15,4 +15,4 @@ jspm_packages
 .webpack
 
 # Yarn directories
-yarn-error.log*
+yarn-error.log

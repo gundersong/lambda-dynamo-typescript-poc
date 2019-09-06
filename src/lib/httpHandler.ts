@@ -1,4 +1,3 @@
-import awsXRay from 'aws-xray-sdk';
 import middy from 'middy';
 import { cors, httpHeaderNormalizer } from 'middy/middlewares';
 import { eventLogging, httpErrorHandler } from './customMiddlewares';
