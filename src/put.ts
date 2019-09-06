@@ -13,10 +13,7 @@ const {
 } = process.env;
 
 const put = async (event: IPutEvent): Promise<APIGatewayProxyResult> => {
-  const {
-    body,
-    pathParameters: { id },
-  } = event;
+  const { body, pathParameters: { id } } = event;
 
   const item: IStoredItem = { id, ...body };
 
