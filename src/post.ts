@@ -10,7 +10,7 @@ import { IPostEvent, IStoredItem } from './types';
 
 const {
   TABLE_NAME: tableName,
-  PUT_TOPIC_ARN: putTopicArn,
+  POST_TOPIC_ARN: postTopicArn,
 } = process.env;
 
 const post = async (event: IPostEvent): Promise<APIGatewayProxyResult> => {
@@ -26,11 +26,11 @@ const post = async (event: IPostEvent): Promise<APIGatewayProxyResult> => {
       throw new httpErrors.InternalServerError(error.message);
     });
 
-  logger.info(`Publishing put message to topic '${putTopicArn}'`, { message: { item } });
+  logger.info(`Publishing put message to topic '${postTopicArn}'`, { message: { item } });
 
-  await sns.publish(putTopicArn, item)
+  await sns.publish(postTopicArn, item)
     .catch((error) =>
-      logger.error(`Error publishing message to topic '${putTopicArn}'`, error),
+      logger.error(`Error publishing message to topic '${postTopicArn}'`, error),
     );
 
   return { body: JSON.stringify(item), statusCode: 201 };

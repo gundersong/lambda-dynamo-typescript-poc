@@ -38,6 +38,8 @@ provider:
     DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT, '8000'}
     TABLE_NAME:
       Ref: DynamoTable
+    POST_TOPIC_ARN:
+      Ref: SNSTopicPost
     PUT_TOPIC_ARN:
       Ref: SNSTopicPut
     DELETE_TOPIC_ARN:
