@@ -12,7 +12,7 @@ package:
     - src/**
 
 custom:
-  apiEntity: todo
+  apiEntity: todos # plural
   version: v1
   pathPrefix: ${self:custom.version}/${self:custom.apiEntity}
   serverless-offline:
@@ -48,6 +48,7 @@ provider:
         - 'dynamodb:PutItem'
         - 'dynamodb:GetItem'
         - 'dynamodb:DeleteItem'
+        - 'dynamodb:Scan'
       Resource:
         Fn::GetAtt:
           - DynamoTable
@@ -60,6 +61,13 @@ provider:
         - Ref: SNSTopicDelete
 
 functions:
+  post:
+    handler: src/post.handler
+    events:
+      - http:
+          method: post
+          path: ${self:custom.pathPrefix}
+          cors: true
   get:
     handler: src/get.handler
     events:
@@ -104,15 +112,27 @@ resources:
             KeyType: HASH
         SSESpecification:
           SSEEnabled: true
+    SNSTopicPost:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:service.name}-${self:custom.apiEntity}-create
+    SSMTopicPost:
+      Type: AWS::SSM::Parameter
+      Properties:
+        Description: "SNS topic for ${self:custom.apiEntity} post events"
+        Name: ${self:custom.apiEntity}-created
+        Type: String
+        Value:
+          Ref: SNSTopicPost
     SNSTopicPut:
       Type: AWS::SNS::Topic
       Properties:
-        TopicName: ${self:service.name}-${self:custom.apiEntity}-put
+        TopicName: ${self:service.name}-${self:custom.apiEntity}-update
     SSMTopicPut:
       Type: AWS::SSM::Parameter
       Properties:
         Description: "SNS topic for ${self:custom.apiEntity} put events"
-        Name: ${self:custom.apiEntity}-put
+        Name: ${self:custom.apiEntity}-updated
         Type: String
         Value:
           Ref: SNSTopicPut

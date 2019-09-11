@@ -6,9 +6,14 @@ export const eventLogging: middy.Middleware<any> = () => ({
     next();
   },
   before: (handler, next) => {
-    const { body, headers, pathParameters: { id } } = handler.event;
-    const details = { id, body, headers };
-    logger.info('Event Received', details);
+    try {
+      const { body, headers, pathParameters } = handler.event;
+      console.log(handler.event);
+      const details = { pathParameters, body, headers };
+      logger.info('Event Received', details);
+    } catch (e) {
+      logger.error(e);
+    }
     next();
   },
   onError: (handler, next) => {

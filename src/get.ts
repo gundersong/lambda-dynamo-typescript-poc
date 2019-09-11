@@ -7,7 +7,7 @@ import { dynamo, httpHandler, logger } from './lib';
 const tableName = process.env.TABLE_NAME;
 
 const get = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const { pathParameters: { id } } = event;
+  const { id } = event.pathParameters;
 
   logger.info(`Getting item from table '${tableName}' with id '${id}'`);
 
