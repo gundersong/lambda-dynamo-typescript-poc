@@ -2,8 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import httpErrors from 'http-errors';
 import 'source-map-support/register';
 
-import { dynamo } from './lib/dynamo';
-import { httpHandler } from './lib/httpHandler';
+import { dynamo, httpHandler, logger } from './lib';
 
 const { TABLE_NAME: tableName } = process.env;
 const PAGE_LIMIT = 10;
@@ -41,13 +40,14 @@ const list = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult>
   })
     .promise()
     .catch((error) => {
-      throw new httpErrors.InternalServerError(error.message);
+      logger.error(error);
+      throw new httpErrors.InternalServerError();
     });
 
   const next = objectToBase64String(LastEvaluatedKey);
 
   return {
-    body: JSON.stringify({ data: Items, meta: { next } }, null, 2),
+    body: JSON.stringify({ data: Items, meta: { next } }),
     statusCode: 200,
   };
 };

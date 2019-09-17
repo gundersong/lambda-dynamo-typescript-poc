@@ -1,5 +1,6 @@
 import { APIGatewayProxyResult } from 'aws-lambda';
 import httpErrors from 'http-errors';
+import { DateTime } from 'luxon';
 import { jsonBodyParser, validator } from 'middy/middlewares';
 import 'source-map-support/register';
 
@@ -21,6 +22,7 @@ const put = async (event: IPutEvent): Promise<APIGatewayProxyResult> => {
   const { Item: existingItem } = await dynamo.get({ Key: { id }, TableName: tableName })
     .promise()
     .catch((error) => {
+      logger.error(error);
       throw new httpErrors.InternalServerError(error.message);
     });
 
@@ -29,20 +31,30 @@ const put = async (event: IPutEvent): Promise<APIGatewayProxyResult> => {
     throw new httpErrors.NotFound();
   }
 
-  const updatedItem: IStoredItem = { id, ...body };
+  const updatedAt = DateTime.utc().toISO();
+  const { createdAt } = existingItem;
 
-  logger.info(`Putting item to table '${tableName}'`, { updatedItem });
+  const updatedItem: IStoredItem = {
+    createdAt,
+    id,
+    updatedAt,
+    ...body,
+  };
+
+  logger.info(`Putting item to table '${tableName}'`, updatedItem);
 
   await dynamo.put({ Item: updatedItem, TableName: tableName })
     .promise()
     .catch((error) => {
-      throw new httpErrors.InternalServerError(error.message);
+      logger.error(error);
+      throw new httpErrors.InternalServerError();
     });
 
-  logger.info(`Publishing put message to topic '${putTopicArn}'`, { message: { updatedItem } });
+  logger.info(`Publishing put message to topic '${putTopicArn}'`, { message: updatedItem });
 
   await sns.publish(putTopicArn, updatedItem)
     .catch((error) =>
+      // SNS failure should not throw error
       logger.error(`Error publishing message to topic '${putTopicArn}'`, error),
     );
 

@@ -13,12 +13,14 @@
     "aws-sdk": "^2.488.0",
     "http-errors": "^1.7.3",
     "lambda-log": "^2.3.0",
+    "luxon": "^1.17.3",
     "middy": "^0.28.2",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.17",
     "@types/lambda-log": "^2.2.0",
+    "@types/luxon": "^1.15.2",
     "@types/node": "^10.12.18",
     "@types/uuid": "^3.4.5",
     "husky": "^3.0.0",

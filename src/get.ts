@@ -14,7 +14,8 @@ const get = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> 
   const { Item: item } = await dynamo.get({ Key: { id }, TableName: tableName })
     .promise()
     .catch((error) => {
-      throw new httpErrors.InternalServerError(error.message);
+      logger.error(error);
+      throw new httpErrors.InternalServerError();
     });
 
   if (!item) {
@@ -25,7 +26,7 @@ const get = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> 
   logger.info(`Successfully retrieved item from table '${tableName}'`, { item });
 
   return {
-    body: JSON.stringify({ item }, null, 2),
+    body: JSON.stringify({ item }),
     statusCode: 200,
   };
 };

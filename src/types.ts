@@ -2,6 +2,8 @@ import { APIGatewayProxyEvent } from 'aws-lambda';
 
 export interface IStoredItem extends IBody {
   id: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
