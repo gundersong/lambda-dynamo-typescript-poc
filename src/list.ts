@@ -23,7 +23,7 @@ const objectToBase64String = (objectKey: {}) => {
 };
 
 const list = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const { from, limit: limitString } = event.queryStringParameters;
+  const { from = '', limit: limitString } = (event.queryStringParameters || {});
 
   const limit = parseInt(limitString, 10);
   if (limit > PAGE_LIMIT) {
@@ -31,6 +31,8 @@ const list = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult>
   }
 
   const exclusiveStartKey = base64StringToObject(from);
+
+  console.log(tableName);
 
   const { Items, LastEvaluatedKey } = await dynamo.scan({
     // TODO - replace with batchGet once items are indexed in ElasticSearch

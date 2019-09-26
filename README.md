@@ -19,13 +19,13 @@ A generic [httpHandler](src/lib/httpHandler.ts) was created which is used for ea
 - Event logging
 - Adding appropriate custom middleware (storage and messaging classes)
 - HTTP Error handling
-- Core headers
+- Cors headers
 - Header normalisaion
 
 This handler was created with a small library called [middy](https://www.npmjs.com/package/middy), which allows the handlers to share the functionality they need so that the actual crud functions only need to handle the small amount of business logic they need to.
 
 ### SNS
-The service also deploys an SNS topic for the PUT and DELETE calls so that other services can listen on these topics and distribute/act on the events if needed, preferably with an SQS queue, conforming to the popular pub/sub architecture.
+The service also deploys an SNS topic for the POST, PUT and DELETE calls so that other services can listen on these topics and distribute/act on the events if needed, preferably with an SQS queue, conforming to the popular pub/sub architecture.
 
 The ARN's for these SNS topics are added to AWS Systems Managers Parameter Store so other repositories can get and subscribe to these topics, e.g.
 
@@ -82,34 +82,56 @@ DeleteSnsSubscription:
 ---
 
 ## Local Testing
-Requires: Docker version 18.09.2 or greater
+Requires: 
+- Serverless installed globally
+- Docker version 18.09.2 or greater
+- jq (JSON command line processor)
+- AWS CLI
 
-  ```bash
-  docker-compose up -d
-  ```
+```bash
+./scripts/startLocal.sh
+```
+By default the API will use port 3000 and the Local Dynamo will use port 8000.
 
 If you need to specify a different port for the API endpoint or the DynamoDB server you can set them in environment variables e.g.
 
-  ```bash
-  API_PORT=4567 DYNAMO_PORT=9000 docker-compose up -d
-  ```
-
-The defaults for these can be found in the [.env](.env) file
+```bash
+API_PORT=4567 DYNAMO_PORT=9000 ./scripts/startLocal.sh
+```
 
 You can then hit the endpoint with curl or the http client of your choice e.g.
 
+### POST
+```bash
+curl -X POST http://localhost:3000/v1/todos \
+-H 'Content-Type: application/json' \
+-d '{"description": "Find a date", "complete": false}'
+```
+
 ### PUT
-  ```bash
-  curl -X PUT http://localhost:4567/v1/todos/1 \
-  -H 'Content-Type: application/json' \
-  -d '{"description": "Find a date", "complete": false}'
+```bash
+curl -X PUT http://localhost:3000/v1/todos/1 \
+-H 'Content-Type: application/json' \
+-d '{"description": "Find a date", "complete": true}'
   ```
 
 ### GET
-  ```bash
-  curl -G http://localhost:4567/todos/1
-  ```
+```bash
+curl -G http://localhost:3000/v1/todos/1
+```
+
+### LIST
+Maximum Limit: 10  
+The `from` query parameter indicates the next key to start the listing from, this can be taken from `meta.next` in the list response
+
+```bash
+curl -G http://localhost:3000/v1/todos?from={NEXT_KEY}&limit=5
+```
+
 ### DELETE
-  ```bash
-  curl -X DELETE http://localhost:4567/todos/1
-  ```
+```bash
+curl -X DELETE http://localhost:3000/v1/todos/1
+```  
+
+### DYNAMO
+The Docker container used for Local testing also comes with a UI to query the table directly, this can be reached at http://localhost:8000/shell/ (the port may be different if you specified one)

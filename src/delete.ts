@@ -24,10 +24,11 @@ const deleteItem = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyR
   logger.info(`Publishing delete message to topic '${deleteTopicArn}'`, { id });
 
   await sns.publish(deleteTopicArn, { id })
-    .catch((error) =>
+    .catch((error) => {
       // SNS failure should not throw error
-      logger.error(`Error publishing message to topic '${deleteTopicArn}'`, error),
-    );
+      logger.info(`Error publishing message to topic '${deleteTopicArn}'`);
+      logger.error(error);
+    });
 
   return { body: '', statusCode: 204 };
 };

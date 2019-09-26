@@ -3,7 +3,6 @@ service:
 
 plugins:
   - serverless-webpack
-  - serverless-dynamodb-local
   - serverless-offline
 
 package:
@@ -14,18 +13,11 @@ package:
 custom:
   apiEntity: todos # plural
   version: v1
+  tableName: ${self:custom.apiEntity}-${self:custom.version}-db
   pathPrefix: ${self:custom.version}/${self:custom.apiEntity}
   serverless-offline:
     host: 0.0.0.0
     port: ${env:API_PORT, '3000'}
-  dynamodb: # Documentation: https://www.npmjs.com/package/serverless-dynamodb-local
-    stages:
-      - dev
-    start:
-      host: 0.0.0.0
-      port: ${env:DYNAMO_PORT, '8000'}
-      inMemory: true
-      migrate: true
 
 provider:
   name: aws
@@ -36,14 +28,10 @@ provider:
     API_ENTITY: ${self:custom.apiEntity}
     API_OFFLINE_PORT: ${env:API_PORT, '3000'}
     DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT, '8000'}
-    TABLE_NAME:
-      Ref: DynamoTable
-    POST_TOPIC_ARN:
-      Ref: SNSTopicPost
-    PUT_TOPIC_ARN:
-      Ref: SNSTopicPut
-    DELETE_TOPIC_ARN:
-      Ref: SNSTopicDelete
+    DELETE_TOPIC_ARN: !Ref SNSTopicDelete
+    POST_TOPIC_ARN: !Ref SNSTopicPost
+    PUT_TOPIC_ARN: !Ref SNSTopicPut
+    TABLE_NAME: ${self:custom.tableName}
   iamRoleStatements:
     - Effect: 'Allow'
       Action:
@@ -104,7 +92,7 @@ resources:
     DynamoTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.apiEntity}-db
+        TableName: ${self:custom.tableName}
         BillingMode: PAY_PER_REQUEST
         AttributeDefinitions:
           - AttributeName: id
@@ -124,8 +112,7 @@ resources:
         Description: "SNS topic for ${self:custom.apiEntity} post events"
         Name: ${self:custom.apiEntity}-created
         Type: String
-        Value:
-          Ref: SNSTopicPost
+        Value: !Ref SNSTopicPost
     SNSTopicPut:
       Type: AWS::SNS::Topic
       Properties:
@@ -136,8 +123,7 @@ resources:
         Description: "SNS topic for ${self:custom.apiEntity} put events"
         Name: ${self:custom.apiEntity}-updated
         Type: String
-        Value:
-          Ref: SNSTopicPut
+        Value: !Ref SNSTopicPut
     SNSTopicDelete:
       Type: AWS::SNS::Topic
       Properties:
@@ -148,5 +134,4 @@ resources:
         Description: "SNS topic for ${self:custom.apiEntity} deleted events"
         Name: ${self:custom.apiEntity}-deleted
         Type: String
-        Value:
-          Ref: SNSTopicDelete
+        Value: !Ref SNSTopicDelete

@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent } from 'aws-lambda';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
-export interface IStoredItem extends IBody {
+export interface IStoredItem extends IBody, DocumentClient.AttributeMap {
   id: string;
   createdAt: string;
   updatedAt: string;

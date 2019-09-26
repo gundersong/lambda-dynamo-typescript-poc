@@ -39,10 +39,11 @@ const post = async (event: IPostEvent): Promise<APIGatewayProxyResult> => {
   logger.info(`Publishing put message to topic '${postTopicArn}'`, { message: item });
 
   await sns.publish(postTopicArn, item)
-    .catch((error) =>
+    .catch((error) => {
       // SNS failure should not throw error
-      logger.error(`Error publishing message to topic '${postTopicArn}'`, error),
-    );
+      logger.info(`Error publishing message to topic '${postTopicArn}'`);
+      logger.error(error);
+    });
 
   return { body: JSON.stringify(item), statusCode: 201 };
 };

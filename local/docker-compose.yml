@@ -1,0 +1,7 @@
+version: "3"
+services:
+  dynamo:
+    image: amazon/dynamodb-local
+    ports:
+      - "${DYNAMO_PORT}:${DYNAMO_PORT}"
+    command: "-jar DynamoDBLocal.jar -port ${DYNAMO_PORT} -sharedDb -dbPath ."
