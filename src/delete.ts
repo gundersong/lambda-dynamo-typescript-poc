@@ -2,31 +2,38 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import httpErrors from 'http-errors';
 import 'source-map-support/register';
 
-import { dynamo, httpHandler, logger, sns } from './lib';
+import { dynamo, eventbridge, httpHandler, logger } from './lib';
+import { IContext } from './types';
 
-const {
-  TABLE_NAME: tableName,
-  DELETE_TOPIC_ARN: deleteTopicArn,
-} = process.env;
+const deleteItem = async (
+  event: APIGatewayProxyEvent,
+  context: IContext
+): Promise<APIGatewayProxyResult> => {
+  const {
+    pathParameters: { id },
+  } = event;
 
-const deleteItem = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const { pathParameters: { id } } = event;
+  const { tableName } = context;
 
-  logger.info(`Deleting item from storage with id '${id}' from table '${tableName}'`);
+  logger.info(
+    `Deleting item from storage with id '${id}' from table '${tableName}'`
+  );
 
-  await dynamo.delete({ Key: { id }, TableName: tableName })
+  await dynamo
+    .delete({ Key: { id }, TableName: tableName })
     .promise()
-    .catch((error) => {
+    .catch(error => {
       logger.error(error);
       throw new httpErrors.InternalServerError();
     });
 
-  logger.info(`Publishing delete message to topic '${deleteTopicArn}'`, { id });
+  logger.info(`Publishing delete message`, { id });
 
-  await sns.publish(deleteTopicArn, { id })
-    .catch((error) => {
-      // SNS failure should not throw error
-      logger.info(`Error publishing message to topic '${deleteTopicArn}'`);
+  await eventbridge
+    .sendEvent({ type: 'deleted', data: { id } })
+    .catch(error => {
+      // event should not throw error
+      logger.info(`Error sending delete message to eventBus`);
       logger.error(error);
     });
 

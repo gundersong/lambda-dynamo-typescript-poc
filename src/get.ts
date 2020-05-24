@@ -3,17 +3,22 @@ import httpErrors from 'http-errors';
 import 'source-map-support/register';
 
 import { dynamo, httpHandler, logger } from './lib';
+import { IContext } from './types';
 
-const tableName = process.env.TABLE_NAME;
-
-const get = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
+const get = async (
+  event: APIGatewayProxyEvent,
+  context: IContext
+): Promise<APIGatewayProxyResult> => {
   const { id } = event.pathParameters;
+
+  const { tableName } = context;
 
   logger.info(`Getting item from table '${tableName}' with id '${id}'`);
 
-  const { Item: item } = await dynamo.get({ Key: { id }, TableName: tableName })
+  const { Item: item } = await dynamo
+    .get({ Key: { id }, TableName: tableName })
     .promise()
-    .catch((error) => {
+    .catch(error => {
       logger.error(error);
       throw new httpErrors.InternalServerError();
     });
@@ -23,7 +28,9 @@ const get = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> 
     throw new httpErrors.NotFound();
   }
 
-  logger.info(`Successfully retrieved item from table '${tableName}'`, { item });
+  logger.info(`Successfully retrieved item from table '${tableName}'`, {
+    item,
+  });
 
   return {
     body: JSON.stringify({ item }),

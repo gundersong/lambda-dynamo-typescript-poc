@@ -13,42 +13,40 @@ package:
 custom:
   apiEntity: todos # plural
   version: v1
-  tableName: ${self:custom.apiEntity}-${self:custom.version}-db
+  tableName: ${self:custom.apiEntity}-${self:provider.stage}-${self:custom.version}
+  eventBusName: ${self:custom.apiEntity}-${self:provider.stage}-${self:custom.version}
   pathPrefix: ${self:custom.version}/${self:custom.apiEntity}
-  serverless-offline:
-    host: 0.0.0.0
-    port: ${env:API_PORT, '3000'}
 
 provider:
   name: aws
-  runtime: nodejs10.x
+  runtime: nodejs12.x
   region: ${opt:region, 'eu-west-2'}
+  stage: ${opt:stage, 'dev'}
   memorySize: 512
   environment:
     API_ENTITY: ${self:custom.apiEntity}
-    API_OFFLINE_PORT: ${env:API_PORT, '3000'}
-    DYNAMO_OFFLINE_PORT: ${env:DYNAMO_PORT, '8000'}
-    DELETE_TOPIC_ARN: !Ref SNSTopicDelete
-    POST_TOPIC_ARN: !Ref SNSTopicPost
-    PUT_TOPIC_ARN: !Ref SNSTopicPut
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: 1
+    EVENT_BUS_NAME: ${self:custom.eventBusName}
+    SERVICE_NAME: ${self:service.name}-${self:provider.stage}-${self:custom.version}
     TABLE_NAME: ${self:custom.tableName}
   iamRoleStatements:
-    - Effect: 'Allow'
+    - Effect: Allow
       Action:
-        - 'dynamodb:PutItem'
-        - 'dynamodb:GetItem'
-        - 'dynamodb:DeleteItem'
-        - 'dynamodb:Scan'
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:DeleteItem
+        - dynamodb:Scan
       Resource:
         Fn::GetAtt:
           - DynamoTable
           - Arn
-    - Effect: 'Allow'
+    - Effect: Allow
       Action:
-        - 'sns:Publish'
+        - events:PutEvents
       Resource:
-        - Ref: SNSTopicPut
-        - Ref: SNSTopicDelete
+        Fn::GetAtt:
+          - EventBus
+          - Arn
 
 functions:
   post:
@@ -102,36 +100,17 @@ resources:
             KeyType: HASH
         SSESpecification:
           SSEEnabled: true
-    SNSTopicPost:
-      Type: AWS::SNS::Topic
+    EventBus:
+      Type: AWS::Events::EventBus
       Properties:
-        TopicName: ${self:service.name}-${self:custom.apiEntity}-create
-    SSMTopicPost:
+        Name: ${self:custom.eventBusName}
+    EventBusArnSSMParameter:
       Type: AWS::SSM::Parameter
       Properties:
-        Description: "SNS topic for ${self:custom.apiEntity} post events"
-        Name: ${self:custom.apiEntity}-created
+        Description: 'Event Bus Arn for ${self:custom.apiEntity} events'
+        Name: ${self:custom.apiEntity}-event-bus
         Type: String
-        Value: !Ref SNSTopicPost
-    SNSTopicPut:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: ${self:service.name}-${self:custom.apiEntity}-update
-    SSMTopicPut:
-      Type: AWS::SSM::Parameter
-      Properties:
-        Description: "SNS topic for ${self:custom.apiEntity} put events"
-        Name: ${self:custom.apiEntity}-updated
-        Type: String
-        Value: !Ref SNSTopicPut
-    SNSTopicDelete:
-      Type: AWS::SNS::Topic
-      Properties:
-        TopicName: ${self:service.name}-${self:custom.apiEntity}-delete
-    SSMTopicDeleted:
-      Type: AWS::SSM::Parameter
-      Properties:
-        Description: "SNS topic for ${self:custom.apiEntity} deleted events"
-        Name: ${self:custom.apiEntity}-deleted
-        Type: String
-        Value: !Ref SNSTopicDelete
+        Value: !GetAtt EventBus.Arn
+  Outputs:
+    EventBusName:
+      Value: !GetAtt EventBus.Name

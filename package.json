@@ -7,24 +7,27 @@
     "build-schema": "./scripts/buildSchema.sh",
     "check-schema": "npm run build-schema && ./scripts/checkSchema.sh",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "yarn tslint 'src/**/*.ts'"
+    "lint": "yarn eslint 'src/**/*.ts'"
   },
   "dependencies": {
-    "aws-sdk": "^2.488.0",
+    "aws-sdk": "^2.683.0",
     "http-errors": "^1.7.3",
-    "lambda-log": "^2.3.0",
-    "luxon": "^1.17.3",
-    "middy": "^0.28.2",
-    "uuid": "^3.3.3"
+    "lambda-log": "^2.4.0",
+    "luxon": "^1.24.1",
+    "middy": "^0.36.0",
+    "middy-env": "^1.0.0",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.17",
+    "@types/aws-lambda": "^8.10.51",
     "@types/lambda-log": "^2.2.0",
     "@types/luxon": "^1.15.2",
     "@types/node": "^10.12.18",
-    "@types/uuid": "^3.4.5",
+    "@types/uuid": "^8.0.0",
+    "eslint": "^7.1.0",
     "husky": "^3.0.0",
-    "serverless": "^1.46.1",
+    "prettier": "^2.0.5",
+    "serverless": "^1.71.3",
     "serverless-offline": "^5.6.0",
     "serverless-webpack": "^5.2.0",
     "ts-loader": "^5.3.3",

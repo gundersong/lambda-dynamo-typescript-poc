@@ -1,11 +1,6 @@
 import { dynamo } from './dynamo';
 import { httpHandler } from './httpHandler';
 import { logger } from './logger';
-import { sns } from './sns';
+import { eventbridge } from './eventbridge';
 
-export {
-  dynamo,
-  httpHandler,
-  logger,
-  sns,
-};
+export { dynamo, eventbridge, httpHandler, logger };

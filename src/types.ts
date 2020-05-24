@@ -1,10 +1,14 @@
-import { APIGatewayProxyEvent } from 'aws-lambda';
+import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 export interface IStoredItem extends IBody, DocumentClient.AttributeMap {
   id: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface IContext extends Context {
+  tableName: string;
 }
 
 /**
@@ -21,13 +25,19 @@ export interface IBody {
   description: string;
 }
 
-export type IPostEvent = Modify<APIGatewayProxyEvent, {
-  body: IBody;
-}>;
+export type IPostEvent = Modify<
+  APIGatewayProxyEvent,
+  {
+    body: IBody;
+  }
+>;
 
-export type IPutEvent = Modify<APIGatewayProxyEvent, {
-  body: IBody;
-}>;
+export type IPutEvent = Modify<
+  APIGatewayProxyEvent,
+  {
+    body: IBody;
+  }
+>;
 
 export interface IHeaders {
   /**

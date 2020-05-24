@@ -6,11 +6,13 @@ export const httpErrorHandler: middy.Middleware<any> = () => ({
       // as per JSON spec http://jsonapi.org/examples/#error-objects-basics
       handler.response = {
         body: JSON.stringify({
-          errors: [{
-            detail: handler.error.details,
-            message: handler.error.message,
-            status: handler.error.statusCode,
-          }],
+          errors: [
+            {
+              detail: handler.error.details,
+              message: handler.error.message,
+              status: handler.error.statusCode,
+            },
+          ],
         }),
         statusCode: handler.error.statusCode,
       };
