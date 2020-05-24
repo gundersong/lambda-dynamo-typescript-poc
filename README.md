@@ -59,6 +59,18 @@ functions:
 
 Use the in-built serverless commands to deploy and remove the service, e.g.
 
+#### Install Dependencies
+
+```bash
+yarn
+```
+
+or
+
+```bash
+npm install
+```
+
 #### Deploy
 
 ```bash
