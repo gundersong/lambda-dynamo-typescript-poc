@@ -12,7 +12,7 @@ To create a new CRUD service for a new entity, only as few things need to change
 
 - Update the entity name within the [serverless.yml](serverless.yml) `custom.apiEntity`
   - This variable is propagated through the app as well as the AWS resource names
-  - All necessary resource names, such as the dynamo table name and SNS topic name are passed into the Lambda as environment variables
+  - All necessary resource names, such as the dynamo table name and Event Bus name are passed into the Lambda as environment variables
 - Update the IBody type within the [types](src/types.ts) file
   - This type is used to generate the schema for the PUT request using the [buildShema.sh](scripts/buildSchema.sh) script, this script is ran along with the [checkShema.sh](scripts/checkShema.sh) script before each commit to ensure the type and the schema are always in-sync. The [buildShema.sh](scripts/buildSchema.sh) will output the schema to a [json file](src/schema/putEvent.schema.json) which is used to validate the request body on every put request.
 
