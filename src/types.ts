@@ -1,6 +1,8 @@
 import { APIGatewayProxyEvent, Context } from 'aws-lambda';
 import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
+declare type Modify<T, R> = Pick<T, Exclude<keyof T, keyof R>> & R;
+
 export interface IStoredItem extends IBody, DocumentClient.AttributeMap {
   id: string;
   createdAt: string;

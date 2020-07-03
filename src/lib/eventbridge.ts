@@ -10,7 +10,9 @@ interface ISendEvent {
 const eventbridgeClient = new EventBridge();
 
 export const eventbridge = {
-  sendEvent: async (params: ISendEvent) => {
+  sendEvent: async (
+    params: ISendEvent,
+  ): Promise<EventBridge.Types.PutEventsResponse> => {
     const { type, data } = params;
 
     const events = [
@@ -22,10 +24,10 @@ export const eventbridge = {
         data,
       },
     ];
-    console.log('\n'.repeat(5), process.env.EVENT_BUS_NAME, '\n'.repeat(5));
+
     return eventbridgeClient
       .putEvents({
-        Entries: events.map(event => ({
+        Entries: events.map((event) => ({
           Detail: JSON.stringify(event),
           DetailType: process.env.API_ENTITY,
           EventBusName: process.env.EVENT_BUS_NAME,

@@ -1,11 +1,11 @@
 import { LambdaLog } from 'lambda-log';
 
 export interface ILogger {
-  log(level: string, msg: string, meta?: object, tags?: string[]): void;
-  info(msg: string, meta?: object, tags?: string[]): void;
-  warn(msg: string, meta?: object, tags?: string[]): void;
-  error(msg: string | Error, meta?: object, tags?: string[]): void;
-  debug(msg: string, meta?: object, tags?: string[]): void;
+  log(level: string, msg: string, meta?: {}, tags?: string[]): void;
+  info(msg: string, meta?: {}, tags?: string[]): void;
+  warn(msg: string, meta?: {}, tags?: string[]): void;
+  error(msg: string | Error, meta?: {}, tags?: string[]): void;
+  debug(msg: string, meta?: {}, tags?: string[]): void;
 }
 
 const keyMap: Array<[string, string]> = [
@@ -28,7 +28,10 @@ const keyReplacer = (key, value) => {
   if (key === '') {
     // Replace log object keys
     addTimeStamp(value);
-    return keyMap.reduce((acc, [oldKey, newKey]) => renameProp(oldKey, newKey, acc), value);
+    return keyMap.reduce(
+      (acc, [oldKey, newKey]) => renameProp(oldKey, newKey, acc),
+      value,
+    );
   }
   return value;
 };

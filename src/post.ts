@@ -11,7 +11,7 @@ import { IContext, IPostEvent, IStoredItem } from './types';
 
 const post = async (
   event: IPostEvent,
-  context: IContext
+  context: IContext,
 ): Promise<APIGatewayProxyResult> => {
   const { body } = event;
   const { tableName } = context;
@@ -31,7 +31,7 @@ const post = async (
   await dynamo
     .put({ Item: item, TableName: tableName })
     .promise()
-    .catch(error => {
+    .catch((error) => {
       logger.error(error);
       throw new httpErrors.InternalServerError();
     });
@@ -40,7 +40,7 @@ const post = async (
 
   await eventbridge
     .sendEvent({ type: 'created', data: { id } })
-    .catch(error => {
+    .catch((error) => {
       // event should not throw error
       logger.info(`Error sending created message to eventBus`);
       logger.error(error);

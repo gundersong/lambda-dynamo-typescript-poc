@@ -10,7 +10,7 @@ import { IContext, IPutEvent, IStoredItem } from './types';
 
 const put = async (
   event: IPutEvent,
-  context: IContext
+  context: IContext,
 ): Promise<APIGatewayProxyResult> => {
   const { body, pathParameters } = event;
   const { tableName } = context;
@@ -21,7 +21,7 @@ const put = async (
   const { Item: existingItem } = await dynamo
     .get({ Key: { id }, TableName: tableName })
     .promise()
-    .catch(error => {
+    .catch((error) => {
       logger.error(error);
       throw new httpErrors.InternalServerError(error.message);
     });
@@ -46,7 +46,7 @@ const put = async (
   await dynamo
     .put({ Item: updatedItem, TableName: tableName })
     .promise()
-    .catch(error => {
+    .catch((error) => {
       logger.error(error);
       throw new httpErrors.InternalServerError();
     });
@@ -57,7 +57,7 @@ const put = async (
 
   await eventbridge
     .sendEvent({ type: 'updated', data: { id } })
-    .catch(error => {
+    .catch((error) => {
       // event should not throw error
       logger.info(`Error sending updated message to eventBus`);
       logger.error(error);

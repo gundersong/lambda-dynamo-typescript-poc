@@ -7,7 +7,7 @@ import { IContext } from './types';
 
 const get = async (
   event: APIGatewayProxyEvent,
-  context: IContext
+  context: IContext,
 ): Promise<APIGatewayProxyResult> => {
   const { id } = event.pathParameters;
 
@@ -18,7 +18,7 @@ const get = async (
   const { Item: item } = await dynamo
     .get({ Key: { id }, TableName: tableName })
     .promise()
-    .catch(error => {
+    .catch((error) => {
       logger.error(error);
       throw new httpErrors.InternalServerError();
     });

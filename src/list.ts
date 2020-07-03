@@ -16,7 +16,7 @@ const base64StringToObject = (base64String: string) => {
   }
 };
 
-const objectToBase64String = (objectKey: {}) => {
+const objectToBase64String = (objectKey: Record<string, unknown>) => {
   const keyString = JSON.stringify(objectKey);
   if (!keyString) {
     return undefined;
@@ -26,7 +26,7 @@ const objectToBase64String = (objectKey: {}) => {
 
 const list = async (
   event: APIGatewayProxyEvent,
-  context: IContext
+  context: IContext,
 ): Promise<APIGatewayProxyResult> => {
   const { tableName } = context;
 
@@ -47,7 +47,7 @@ const list = async (
       TableName: tableName,
     })
     .promise()
-    .catch(error => {
+    .catch((error) => {
       logger.error(error);
       throw new httpErrors.InternalServerError();
     });
