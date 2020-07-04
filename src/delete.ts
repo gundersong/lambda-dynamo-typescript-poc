@@ -14,7 +14,6 @@ export const handler = async (
   } = event;
 
   const { tableName } = context;
-  console.log({ tableName });
 
   logger.info(
     `Deleting item from storage with id '${id}' from table '${tableName}'`,
