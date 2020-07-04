@@ -1,6 +1,7 @@
 # package directories
 node_modules
 jspm_packages
+lib
 
 # mac directories
 .DS_Store
